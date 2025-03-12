@@ -133,7 +133,49 @@ const updateBudget = async (req, res) => {
       res.status(500).json({ message: "Error calculating budget usage", error });
     }
   };
+
+  const getBudgetUsageHistory = async (req, res) => {
+    try {
+      const userEmail = req.user.email;
   
-  module.exports = { setBudget, getBudget, updateBudget, listBudgets, deleteBudget, budgetUsage };  // ✅ Ensure all functions are exported
+      const budgetsSnapshot = await db.collection("users").doc(userEmail).collection("budgets").orderBy("monthYear", "asc").get();
+      const budgets = budgetsSnapshot.docs.map(doc => ({
+        monthYear: doc.id,
+        budgetAmount: doc.data().amount
+      }));
+  
+      // Fetch all expenses
+      const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").get();
+      const expenses = expensesSnapshot.docs.map(doc => doc.data());
+  
+      // Calculate total spent per month
+      const expenseByMonth = {};
+      expenses.forEach(exp => {
+        const monthYear = exp.date.substring(0, 7); // Extract "YYYY-MM"
+        if (!expenseByMonth[monthYear]) {
+          expenseByMonth[monthYear] = 0;
+        }
+        expenseByMonth[monthYear] += exp.amount;
+      });
+  
+      // Merge budget & spending data
+      const history = budgets.map(budget => {
+        const totalSpent = expenseByMonth[budget.monthYear] || 0;
+        return {
+          monthYear: budget.monthYear,
+          budgetAmount: budget.budgetAmount,
+          totalSpent,
+          percentageUsed: ((totalSpent / budget.budgetAmount) * 100).toFixed(2)
+        };
+      });
+  
+      res.json(history);
+    } catch (error) {
+      console.error("Budget Usage History Error:", error);
+      res.status(500).json({ message: "Error fetching budget usage history", error });
+    }
+  };
+  
+  module.exports = { setBudget, getBudget, updateBudget, listBudgets, deleteBudget, budgetUsage, getBudgetUsageHistory };  // ✅ Ensure all functions are exported
   
   

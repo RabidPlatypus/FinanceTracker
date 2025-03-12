@@ -160,6 +160,36 @@ const getExpenseReport = async (req, res) => {
   }
 };
 
-module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, addRecurringExpense, getExpenseReport };
+const getExpenseTrends = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+
+    const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").get();
+    const expenses = expensesSnapshot.docs.map(doc => doc.data());
+
+    // Calculate total spent per month
+    const expenseByMonth = {};
+    expenses.forEach(exp => {
+      const monthYear = exp.date.substring(0, 7); // Extract "YYYY-MM"
+      if (!expenseByMonth[monthYear]) {
+        expenseByMonth[monthYear] = 0;
+      }
+      expenseByMonth[monthYear] += exp.amount;
+    });
+
+    // Find highest & lowest spending months
+    const sortedMonths = Object.entries(expenseByMonth).sort((a, b) => b[1] - a[1]);
+
+    res.json({
+      highestSpendingMonth: { monthYear: sortedMonths[0][0], amount: sortedMonths[0][1] },
+      lowestSpendingMonth: { monthYear: sortedMonths[sortedMonths.length - 1][0], amount: sortedMonths[sortedMonths.length - 1][1] }
+    });
+  } catch (error) {
+    console.error("Expense Trends Error:", error);
+    res.status(500).json({ message: "Error fetching expense trends", error });
+  }
+};
+
+module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, addRecurringExpense, getExpenseReport, getExpenseTrends };
 
 
