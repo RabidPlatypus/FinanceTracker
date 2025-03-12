@@ -84,5 +84,56 @@ const updateBudget = async (req, res) => {
     }
   };  
   
-  module.exports = { setBudget, getBudget, updateBudget, listBudgets };  
+  const deleteBudget = async (req, res) => {
+    try {
+      const { monthYear } = req.params;
+      const userEmail = req.user.email;
+  
+      const budgetRef = db.collection("users").doc(userEmail).collection("budgets").doc(monthYear);
+      const doc = await budgetRef.get();
+  
+      if (!doc.exists) {
+        return res.status(404).json({ message: "Budget for this month does not exist." });
+      }
+  
+      await budgetRef.delete();
+      res.json({ message: `Budget for ${monthYear} deleted successfully!` });
+    } catch (error) {
+      console.error("Delete Budget Error:", error);
+      res.status(500).json({ message: "Error deleting budget", error });
+    }
+  };
+
+  const budgetUsage = async (req, res) => {
+    try {
+      const { monthYear } = req.params;
+      const userEmail = req.user.email;
+  
+      const budgetRef = db.collection("users").doc(userEmail).collection("budgets").doc(monthYear);
+      const budgetDoc = await budgetRef.get();
+  
+      if (!budgetDoc.exists) {
+        return res.status(404).json({ message: "No budget set for this month." });
+      }
+  
+      const budgetAmount = budgetDoc.data().amount;
+  
+      const expensesSnapshot = await db.collection("users").doc(userEmail)
+        .collection("expenses")
+        .where("date", ">=", `${monthYear}-01`)
+        .where("date", "<=", `${monthYear}-31`)
+        .get();
+  
+      const totalSpent = expensesSnapshot.docs.reduce((sum, doc) => sum + doc.data().amount, 0);
+      const percentageUsed = ((totalSpent / budgetAmount) * 100).toFixed(2);
+  
+      res.json({ budgetAmount, totalSpent, percentageUsed });
+    } catch (error) {
+      console.error("Budget Usage Error:", error);
+      res.status(500).json({ message: "Error calculating budget usage", error });
+    }
+  };
+  
+  module.exports = { setBudget, getBudget, updateBudget, listBudgets, deleteBudget, budgetUsage };  // ✅ Ensure all functions are exported
+  
   

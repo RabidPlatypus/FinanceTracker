@@ -31,9 +31,20 @@ const addExpense = async (req, res) => {
 const listExpenses = async (req, res) => {
   try {
     const userEmail = req.user.email;
-    const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").orderBy("date", "desc").get();
+    const { category, start, end } = req.query;  // ✅ Get query params
 
+    let query = db.collection("users").doc(userEmail).collection("expenses");
+
+    if (category) {
+      query = query.where("category", "==", category);
+    }
+    if (start && end) {
+      query = query.where("date", ">=", start).where("date", "<=", end);
+    }
+
+    const expensesSnapshot = await query.orderBy("date", "desc").get();
     const expenses = expensesSnapshot.docs.map(doc => doc.data());
+
     res.json(expenses);
   } catch (error) {
     console.error("List Expenses Error:", error);
