@@ -30,7 +30,7 @@ const getBudget = async (req, res) => {
     const doc = await budgetRef.get();
 
     if (!doc.exists) {
-      return res.status(404).json({ message: "No budget found for this month." });
+      return res.json({ amount: 0 }); // ✅ Return a default budget amount instead of 404
     }
 
     res.json(doc.data());
@@ -39,6 +39,7 @@ const getBudget = async (req, res) => {
     res.status(500).json({ message: "Error fetching budget", error });
   }
 };
+
 
 const updateBudget = async (req, res) => {
     try {
