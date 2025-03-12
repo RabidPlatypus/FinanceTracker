@@ -1,19 +1,22 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute"; 
 
 function App() {
+  const isAuthenticated = !!localStorage.getItem("token"); // Check if user is logged in
+
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* Redirect "/" to login if not logged in, otherwise go to dashboard */}
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      
-      {/* Protected routes */}
+
+      {/* Protected Routes - Only accessible when logged in */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/analytics" element={<Analytics />} />

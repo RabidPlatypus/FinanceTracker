@@ -1,6 +1,7 @@
 import { useState } from "react";
-import API from "../api"; // Import API service
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import API from "../api";
+import "./Signup.css"; // ✅ We'll create this CSS file for styling
 
 function Signup() {
   const [form, setForm] = useState({
@@ -9,6 +10,7 @@ function Signup() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,24 +19,66 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+
     try {
-      await API.post("/auth/signup", form);
-      navigate("/login"); // Redirect to login after signup
-    } catch (error) {
-      alert("Signup failed. Try again.");
+      const { data } = await API.post("/auth/signup", form);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
+      navigate("/dashboard"); // Redirect to dashboard
+    } catch (err) {
+      setError("Signup failed. This email may already be in use.");
     }
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
-      <form onSubmit={handleSignup}>
-        <input type="text" name="firstName" placeholder="First Name" value={form.firstName} onChange={handleChange} />
-        <input type="text" name="lastName" placeholder="Last Name" value={form.lastName} onChange={handleChange} />
-        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} />
-        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} />
-        <button type="submit">Signup</button>
-      </form>
+    <div className="signup-container">
+      <div className="signup-box">
+        <h1>Create an Account</h1>
+        <p>Start tracking your finances today!</p>
+
+        {error && <p className="error-message">{error}</p>}
+
+        <form onSubmit={handleSignup}>
+          <input 
+            type="text" 
+            name="firstName" 
+            placeholder="First Name" 
+            value={form.firstName} 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="lastName" 
+            placeholder="Last Name" 
+            value={form.lastName} 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Email" 
+            value={form.email} 
+            onChange={handleChange} 
+            required 
+          />
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Password" 
+            value={form.password} 
+            onChange={handleChange} 
+            required 
+          />
+          <button type="submit">Sign Up</button>
+        </form>
+
+        <div className="signup-links">
+          <Link to="/login">Already have an account? Log in</Link>
+        </div>
+      </div>
     </div>
   );
 }
