@@ -1,0 +1,65 @@
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    padding: 10px 20px;
+    color: white;
+    font-size: 16px;
+  }
+  
+  .brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    flex-grow: 1; /* Pushes it to center */
+    text-align: center;
+  }
+  
+  .greeting {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .nav-button {
+    text-decoration: none;
+    background: white;
+    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+  
+  .nav-button:hover {
+    background: #f0f0f0;
+  }
+  
+  .icon-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .icon-button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Dark Mode Styles */
+  .dark-mode {
+    background-color: #121212;
+    color: white;
+  }
+  
+  .dark-mode .navbar {
+    background-color: #333;
+  }
+  
