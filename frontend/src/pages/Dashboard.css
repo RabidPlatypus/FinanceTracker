@@ -67,6 +67,13 @@
   align-items: center;
 }
 
+.modal label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: left;
+}
+
 .modal-content {
   background: white;
   padding: 20px;
@@ -149,4 +156,64 @@ select {
   font-size: 14px;
   font-weight: bold;
   margin-top: 10px;
+}
+
+/* === EXPENSE LIST === */
+.expense-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.expense-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  background: white;
+}
+
+/* === EXPENSE TABLE === */
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.expense-table th, 
+.expense-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.expense-table th {
+  background-color: #f4f4f4;
+}
+
+.expense-table td {
+  font-size: 18px;
+}
+
+/* === ACTION BUTTONS (EDIT, DELETE) === */
+.edit-button, .delete-button {
+  padding: 5px 8px;
+  font-size: 14px;
+}
+
+/* === EXPORT BUTTON === */
+.export-button {
+  background-color: #17a2b8;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.export-button:hover {
+  opacity: 0.8;
 }

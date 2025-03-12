@@ -13,12 +13,13 @@ const addExpense = async (req, res) => {
     const expenseRef = db.collection("users").doc(userEmail).collection("expenses").doc();
     await expenseRef.set({
       id: expenseRef.id,
-      amount,
+      amount: parseFloat(amount), // ✅ Convert to number
       category,
       description: description || "",
       date,
       createdAt: new Date().toISOString()
     });
+    
 
     res.status(201).json({ message: "Expense added successfully!" });
   } catch (error) {
@@ -43,7 +44,11 @@ const listExpenses = async (req, res) => {
     }
 
     const expensesSnapshot = await query.orderBy("date", "desc").get();
-    const expenses = expensesSnapshot.docs.map(doc => doc.data());
+    const expenses = expensesSnapshot.docs.map(doc => ({
+      ...doc.data(),
+      amount: parseFloat(doc.data().amount) // ✅ Convert amount to a number
+    }));
+    
 
     res.json(expenses);
   } catch (error) {
