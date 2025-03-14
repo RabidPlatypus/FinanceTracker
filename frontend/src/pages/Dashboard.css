@@ -217,3 +217,24 @@ select {
 .export-button:hover {
   opacity: 0.8;
 }
+
+/* === DARK MODE STYLES === */
+.dark-mode .expense-table {
+  background-color: #222 !important;  /* Dark background */
+  color: #fff !important;  /* White text */
+}
+
+.dark-mode .expense-table th {
+  background-color: #333 !important; /* Darker header */
+}
+
+.dark-mode .expense-table td {
+  color: #fff !important;  /* White text */
+  background-color: #222 !important;
+}
+
+.dark-mode .expense-list {
+  background-color: #222 !important;
+  border-color: #444 !important;
+}
+

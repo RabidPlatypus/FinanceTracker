@@ -160,10 +160,13 @@ function Dashboard() {
         response = await API.put(`/budget/update/${selectedMonth}`, { amount: parseFloat(updatedBudget) });
       } else {
         console.log(`🆕 Creating new budget for ${selectedMonth} with amount: $${updatedBudget}`);
-        const requestData = { month: selectedMonth, amount: parseFloat(updatedBudget) };
+        const requestData = { monthYear: selectedMonth, amount: parseFloat(updatedBudget) };
         console.log("📤 Sending data to backend:", requestData);
 
-        response = await API.post(`/budget/set`, requestData, { headers: { "Content-Type": "application/json" } });
+        response = await API.post(`/budget/set`, requestData, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        });
+        
 
       }
   
