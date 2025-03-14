@@ -316,31 +316,34 @@ function Dashboard() {
     )}
 
 
-        <table className="expense-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Actions</th>
+    <div className="expense-list-container">
+      <table className="expense-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredAndSortedExpenses().map(expense => (
+            <tr key={expense.id}>
+              <td>{expense.date}</td>
+              <td>{expense.category}</td>
+              <td>{expense.description}</td>
+              <td>${parseFloat(expense.amount || 0).toFixed(2)}</td>
+              <td>
+                <button className="edit-button" onClick={() => setEditingExpense(expense)}>✏️</button>
+                <button className="delete-button" onClick={() => handleDeleteExpense(expense.id)}>🗑️</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredAndSortedExpenses().map(expense => (
-              <tr key={expense.id}>
-                <td>{expense.date}</td>
-                <td>{expense.category}</td>
-                <td>{expense.description}</td>
-                <td>${parseFloat(expense.amount || 0).toFixed(2)}</td>
-                <td>
-                  <button className="edit-button" onClick={() => setEditingExpense(expense)}>✏️</button>
-                  <button className="delete-button" onClick={() => handleDeleteExpense(expense.id)}>🗑️</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
+</div>
+
       </div>
     </div>
   );

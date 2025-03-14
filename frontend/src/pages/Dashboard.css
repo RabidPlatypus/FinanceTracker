@@ -15,6 +15,17 @@
   background: #f8f8f8;
   padding: 15px;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ensure it takes the full height of the viewport */
+  overflow: hidden; /* Prevents full page scrolling */
+}
+
+.expense-list-container {
+  flex-grow: 1; /* Takes up all available space */
+  overflow-y: auto; /* Enables scrolling inside this container */
+  min-height: 0; /* Important: Allows it to shrink properly */
+  max-height: calc(100vh - 250px); /* Adjust height dynamically */
 }
 
 /* === MONTH SELECTOR === */
