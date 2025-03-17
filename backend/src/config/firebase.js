@@ -2,12 +2,10 @@ const admin = require("firebase-admin");
 const dotenv = require("dotenv");
 
 dotenv.config();
-
-// Load Firebase service account key
-const serviceAccount = require("./firebaseServiceAccount.json");
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CREDENTIALS);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(firebaseConfig),
 });
 
 const db = admin.firestore();

@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: "https://financetracker-3bne.onrender.com", // Use your actual Render URL
 });
+
 
 // Attach token for authenticated requests
 API.interceptors.request.use((config) => {
