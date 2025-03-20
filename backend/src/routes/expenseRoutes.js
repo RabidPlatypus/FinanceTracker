@@ -11,7 +11,5 @@ router.delete("/delete/:id", authenticateUser, deleteExpense);
 router.post("/recurring", authenticateUser, addRecurringExpense);
 router.get("/report/:monthYear", authenticateUser, getExpenseReport);
 router.get("/trends", authenticateUser, getExpenseTrends);
-router.get("/budget/usage-history", authenticateUser, getBudgetUsageHistory);
-
 
 module.exports = router;
