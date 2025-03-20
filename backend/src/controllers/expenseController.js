@@ -182,13 +182,16 @@ const getExpenseTrends = async (req, res) => {
       expenseByMonth[monthYear] += exp.amount;
     });
 
-    // Find highest & lowest spending months
-    const sortedMonths = Object.entries(expenseByMonth).sort((a, b) => b[1] - a[1]);
+    // Convert object to array
+    const trendsArray = Object.keys(expenseByMonth).map(month => ({
+      monthYear: month,
+      totalSpent: expenseByMonth[month]
+    }));
 
-    res.json({
-      highestSpendingMonth: { monthYear: sortedMonths[0][0], amount: sortedMonths[0][1] },
-      lowestSpendingMonth: { monthYear: sortedMonths[sortedMonths.length - 1][0], amount: sortedMonths[sortedMonths.length - 1][1] }
-    });
+    // Sort by date (ascending)
+    trendsArray.sort((a, b) => a.monthYear.localeCompare(b.monthYear));
+
+    res.json(trendsArray);
   } catch (error) {
     console.error("Expense Trends Error:", error);
     res.status(500).json({ message: "Error fetching expense trends", error });
