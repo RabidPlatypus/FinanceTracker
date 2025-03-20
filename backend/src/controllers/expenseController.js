@@ -232,6 +232,8 @@ const getBudgetUsageHistory = async (req, res) => {
       totalSpent: expensesByMonth[month]
     }));
 
+    console.log("Budget API Response:", combinedData); // Debugging
+
     res.json(combinedData);
   } catch (error) {
     console.error("Error fetching budget usage history:", error);
