@@ -198,6 +198,47 @@ const getExpenseTrends = async (req, res) => {
   }
 };
 
-module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, addRecurringExpense, getExpenseReport, getExpenseTrends };
+const getBudgetUsageHistory = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+
+    // Fetch budgets
+    const budgetsSnapshot = await db.collection("users").doc(userEmail).collection("budgets").get();
+    const budgets = budgetsSnapshot.docs.map(doc => doc.data());
+
+    // Fetch expenses
+    const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").get();
+    const expenses = expensesSnapshot.docs.map(doc => doc.data());
+
+    // Organize budgets by month
+    const budgetByMonth = {};
+    budgets.forEach(budget => {
+      const monthYear = budget.month.substring(0, 7);
+      budgetByMonth[monthYear] = budget.amount;
+    });
+
+    // Organize expenses by month
+    const expensesByMonth = {};
+    expenses.forEach(exp => {
+      const monthYear = exp.date.substring(0, 7);
+      if (!expensesByMonth[monthYear]) expensesByMonth[monthYear] = 0;
+      expensesByMonth[monthYear] += exp.amount;
+    });
+
+    // Combine budgets and expenses into a single array
+    const combinedData = Object.keys(expensesByMonth).map(month => ({
+      monthYear: month,
+      budgetAmount: budgetByMonth[month] || 0, // If no budget exists, set it to 0
+      totalSpent: expensesByMonth[month]
+    }));
+
+    res.json(combinedData);
+  } catch (error) {
+    console.error("Error fetching budget usage history:", error);
+    res.status(500).json({ message: "Error fetching budget usage history", error });
+  }
+};
+
+module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, addRecurringExpense, getExpenseReport, getExpenseTrends, getBudgetUsageHistory };
 
 
