@@ -4,21 +4,21 @@ import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Box, Typography, Select, MenuItem, TextField } from "@mui/material";
 import { PieChart, Pie, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line } from "recharts";
 import API from "../api";
+import './Analytics.css';
 
 function Analytics() {
   const [activeTab, setActiveTab] = useState(0);
 
-  // Filters
   const [categoryFilter, setCategoryFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // Data
   const [expenses, setExpenses] = useState([]);
+  const [trendData, setTrendData] = useState([]);
   const [highestMonth, setHighestMonth] = useState("");
   const [lowestMonth, setLowestMonth] = useState("");
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF4563", "#7D3C98", "#2E86C1"];
+  const COLORS = ["#2ECC71", "#27AE60", "#1ABC9C", "#16A085", "#3498DB", "#1F618D"];
 
   useEffect(() => {
     fetchExpenses();
@@ -52,12 +52,13 @@ function Analytics() {
       monthlyData[key] = (monthlyData[key] || 0) + expense.amount;
     });
 
-    const trendArray = Object.keys(monthlyData).map((monthYear) => ({
-      monthYear,
-      totalSpent: monthlyData[monthYear],
-    }));
+    const trendArray = Object.keys(monthlyData)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map((monthYear) => ({
+        monthYear,
+        totalSpent: monthlyData[monthYear],
+      }));
 
-    // Update highest and lowest based on current trendArray
     if (trendArray.length > 0) {
       const sorted = [...trendArray].sort((a, b) => b.totalSpent - a.totalSpent);
       setHighestMonth(sorted[0]?.monthYear || "N/A");
@@ -70,9 +71,7 @@ function Analytics() {
     setTrendData(trendArray);
   };
 
-  const [trendData, setTrendData] = useState([]);
-
-  // Aggregate for Spending Overview
+  // Aggregating for spending overview
   const categoryData = expenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
@@ -89,10 +88,12 @@ function Analytics() {
     return acc;
   }, {});
 
-  const barData = Object.keys(dailyData).map((date) => ({
-    date,
-    total: dailyData[date],
-  }));
+  const barData = Object.keys(dailyData)
+    .sort((a, b) => new Date(a) - new Date(b))
+    .map((date) => ({
+      date,
+      total: dailyData[date],
+    }));
 
   return (
     <Box sx={{ width: "100%", padding: 2 }}>
@@ -131,27 +132,31 @@ function Analytics() {
 
             {/* Pie Chart */}
             <Typography variant="h6" align="center" sx={{ marginTop: 2 }}>Category Distribution</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <Box sx={{ width: "100%", minWidth: "0", overflowX: "auto" }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
 
             {/* Bar Chart */}
             <Typography variant="h6" align="center" sx={{ marginTop: 2 }}>Daily Spending</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="total" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
+            <Box sx={{ width: "100%", minWidth: "0", overflowX: "auto" }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barData} barCategoryGap="20%">
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="total" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
           </>
         )}
 
@@ -161,14 +166,16 @@ function Analytics() {
 
             {trendData.length > 0 ? (
               <>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={trendData}>
-                    <XAxis dataKey="monthYear" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="totalSpent" stroke="#FF8042" />
-                  </LineChart>
-                </ResponsiveContainer>
+                <Box sx={{ width: "100%", minWidth: "0", overflowX: "auto", overflowY: "hidden", marginLeft: "-20px" }}>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={trendData}>
+                      <XAxis dataKey="monthYear" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="totalSpent" stroke="#FF8042" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </Box>
 
                 {/* Highest and Lowest */}
                 <Typography variant="h6" align="center" sx={{ marginTop: 3 }}>

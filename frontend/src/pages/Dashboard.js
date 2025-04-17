@@ -239,7 +239,9 @@ function Dashboard() {
             <option value="desc">Newest First</option>
             <option value="asc">Oldest First</option>
           </select>
-          <CSVLink data={filteredAndSortedExpenses()} filename="expenses.csv" className="export-button">Export CSV</CSVLink>
+          <CSVLink data={filteredAndSortedExpenses()} filename="expenses.csv" className="export-button">
+            Export CSV
+          </CSVLink>
         </div>
           
         {showExpenseModal && (
