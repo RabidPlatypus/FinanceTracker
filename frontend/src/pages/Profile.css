@@ -54,9 +54,8 @@ button[type="submit"]:hover {
   margin-bottom: 10px;
 }
 
-/* Ensure other headers outside Profile page are unaffected */
 body .dark-mode h1,
 body .dark-mode h2 {
-  color: inherit; /* Reset inherited styles */
+  color: inherit; 
 }
 

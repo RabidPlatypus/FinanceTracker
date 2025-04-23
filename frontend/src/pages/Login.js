@@ -17,7 +17,7 @@ function Login({ setAuth }) {
       const { data } = await API.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      setAuth(true); // ✅ Force re-render to show Navbar
+      setAuth(true); 
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password. Please try again.");

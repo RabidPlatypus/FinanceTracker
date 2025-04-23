@@ -1,6 +1,6 @@
 const { db } = require("../config/firebase");
 
-// 📌 Add Expense
+// Add new Expense
 const addExpense = async (req, res) => {
   try {
     const { amount, category, description, date } = req.body;
@@ -13,8 +13,7 @@ const addExpense = async (req, res) => {
     const expenseRef = db.collection("users").doc(userEmail).collection("expenses").doc();
     await expenseRef.set({
       id: expenseRef.id,
-      amount: parseFloat(amount), // ✅ Convert to number
-      category,
+      amount: parseFloat(amount), 
       description: description || "",
       date,
       createdAt: new Date().toISOString()
@@ -28,11 +27,11 @@ const addExpense = async (req, res) => {
   }
 };
 
-// 📌 List Expenses
+// List expenses for a user
 const listExpenses = async (req, res) => {
   try {
     const userEmail = req.user.email;
-    const { category, start, end } = req.query;  // ✅ Get query params
+    const { category, start, end } = req.query;  
 
     let query = db.collection("users").doc(userEmail).collection("expenses");
 
@@ -46,7 +45,7 @@ const listExpenses = async (req, res) => {
     const expensesSnapshot = await query.orderBy("date", "desc").get();
     const expenses = expensesSnapshot.docs.map(doc => ({
       ...doc.data(),
-      amount: parseFloat(doc.data().amount) // ✅ Convert amount to a number
+      amount: parseFloat(doc.data().amount) 
     }));
     
 
@@ -57,7 +56,7 @@ const listExpenses = async (req, res) => {
   }
 };
 
-// 📌 Update Expense
+// Update an existing Expense
 const updateExpense = async (req, res) => {
   try {
     const { amount, category, description, date } = req.body;
@@ -80,7 +79,7 @@ const updateExpense = async (req, res) => {
   }
 };
 
-// 📌 Delete Expense
+// Delete expense
 const deleteExpense = async (req, res) => {
   try {
     const userEmail = req.user.email;
@@ -96,37 +95,10 @@ const deleteExpense = async (req, res) => {
   }
 };
 
-const addRecurringExpense = async (req, res) => {
-  try {
-    const { amount, category, description, startDate, repeatInterval } = req.body;
-    const userEmail = req.user.email;
-
-    if (!amount || !category || !startDate || !repeatInterval) {
-      return res.status(400).json({ message: "Amount, category, startDate, and repeatInterval are required." });
-    }
-
-    const expenseRef = db.collection("users").doc(userEmail).collection("recurring_expenses").doc();
-
-    await expenseRef.set({
-      id: expenseRef.id,
-      amount,
-      category,
-      description: description || "",
-      startDate,
-      repeatInterval, // e.g., "monthly", "weekly"
-      nextDueDate: startDate // Auto-generate the next expense from here
-    });
-
-    res.status(201).json({ message: "Recurring expense added successfully!" });
-  } catch (error) {
-    console.error("Add Recurring Expense Error:", error);
-    res.status(500).json({ message: "Error adding recurring expense", error });
-  }
-};
-
+// The following functions are used to get data for the charts on Analytics page
 const getExpenseReport = async (req, res) => {
   try {
-    const { monthYear } = req.params; // Format: "2025-03"
+    const { monthYear } = req.params; 
     const userEmail = req.user.email;
 
     const expensesSnapshot = await db.collection("users").doc(userEmail)
@@ -137,10 +109,8 @@ const getExpenseReport = async (req, res) => {
 
     const expenses = expensesSnapshot.docs.map(doc => doc.data());
 
-    // ✅ Calculate total spending
     const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-    // ✅ Group expenses by category
     const categoryBreakdown = {};
     expenses.forEach(exp => {
       if (!categoryBreakdown[exp.category]) {
@@ -149,7 +119,6 @@ const getExpenseReport = async (req, res) => {
       categoryBreakdown[exp.category] += exp.amount;
     });
 
-    // ✅ Identify top spending category
     const topCategory = Object.entries(categoryBreakdown)
       .sort((a, b) => b[1] - a[1])[0] || ["None", 0];
 
@@ -172,23 +141,20 @@ const getExpenseTrends = async (req, res) => {
     const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").get();
     const expenses = expensesSnapshot.docs.map(doc => doc.data());
 
-    // Calculate total spent per month
     const expenseByMonth = {};
     expenses.forEach(exp => {
-      const monthYear = exp.date.substring(0, 7); // Extract "YYYY-MM"
+      const monthYear = exp.date.substring(0, 7);
       if (!expenseByMonth[monthYear]) {
         expenseByMonth[monthYear] = 0;
       }
       expenseByMonth[monthYear] += exp.amount;
     });
 
-    // Convert object to array
     const trendsArray = Object.keys(expenseByMonth).map(month => ({
       monthYear: month,
       totalSpent: expenseByMonth[month]
     }));
 
-    // Sort by date (ascending)
     trendsArray.sort((a, b) => a.monthYear.localeCompare(b.monthYear));
 
     res.json(trendsArray);
@@ -198,49 +164,6 @@ const getExpenseTrends = async (req, res) => {
   }
 };
 
-const getBudgetUsageHistory = async (req, res) => {
-  try {
-    const userEmail = req.user.email;
-
-    // Fetch budgets
-    const budgetsSnapshot = await db.collection("users").doc(userEmail).collection("budgets").get();
-    const budgets = budgetsSnapshot.docs.map(doc => doc.data());
-
-    // Fetch expenses
-    const expensesSnapshot = await db.collection("users").doc(userEmail).collection("expenses").get();
-    const expenses = expensesSnapshot.docs.map(doc => doc.data());
-
-    // Organize budgets by month
-    const budgetByMonth = {};
-    budgets.forEach(budget => {
-      const monthYear = budget.month.substring(0, 7);
-      budgetByMonth[monthYear] = budget.amount;
-    });
-
-    // Organize expenses by month
-    const expensesByMonth = {};
-    expenses.forEach(exp => {
-      const monthYear = exp.date.substring(0, 7);
-      if (!expensesByMonth[monthYear]) expensesByMonth[monthYear] = 0;
-      expensesByMonth[monthYear] += exp.amount;
-    });
-
-    // Combine budgets and expenses into a single array
-    const combinedData = Object.keys(expensesByMonth).map(month => ({
-      monthYear: month,
-      budgetAmount: budgetByMonth[month] || 0, // If no budget exists, set it to 0
-      totalSpent: expensesByMonth[month]
-    }));
-
-    console.log("Budget API Response:", combinedData); // Debugging
-
-    res.json(combinedData);
-  } catch (error) {
-    console.error("Error fetching budget usage history:", error);
-    res.status(500).json({ message: "Error fetching budget usage history", error });
-  }
-};
-
-module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, addRecurringExpense, getExpenseReport, getExpenseTrends, getBudgetUsageHistory };
+module.exports = { addExpense, listExpenses, updateExpense, deleteExpense, getExpenseReport, getExpenseTrends };
 
 

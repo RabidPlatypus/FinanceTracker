@@ -1,7 +1,7 @@
 const { db } = require("../config/firebase");
 const bcrypt = require("bcryptjs");
 
-// 📌 Update User Profile
+// Update User Profile
 const updateUserProfile = async (req, res) => {
   try {
     const { firstName, lastName, email } = req.body;
@@ -21,7 +21,7 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-// 📌 Change Password
+// Change Password
 const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
@@ -55,12 +55,11 @@ const changePassword = async (req, res) => {
   }
 };
 
-// 📌 Delete User Account
+// Delete User Account
 const deleteUserAccount = async (req, res) => {
   try {
     const userEmail = req.user.email;
 
-    // 🔥 Delete user data from Firestore
     await db.collection("users").doc(userEmail).delete();
 
     res.json({ message: "Account deleted successfully!" });

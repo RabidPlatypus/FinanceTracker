@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api";
-import "./Signup.css"; // ✅ We'll create this CSS file for styling
+import "./Signup.css"; 
 
 function Signup() {
   const [form, setForm] = useState({
@@ -19,13 +19,13 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
+    setError(""); 
 
     try {
       const { data } = await API.post("/auth/signup", form);
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
-      navigate("/dashboard"); // Redirect to dashboard
+      localStorage.setItem("user", JSON.stringify(data.user)); 
+      navigate("/dashboard"); 
     } catch (err) {
       setError("Signup failed. This email may already be in use.");
     }

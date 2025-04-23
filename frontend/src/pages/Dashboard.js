@@ -53,13 +53,13 @@ function Dashboard() {
   }
 
   function getBudgetUsagePercentage() {
-    if (!budget || budget.amount === 0) return totalSpent > 0 ? 100 : 0; // ✅ Show 100% if no budget but expenses exist
+    if (!budget || budget.amount === 0) return totalSpent > 0 ? 100 : 0; 
     return ((totalSpent / budget.amount) * 100).toFixed(2);
   }  
 
   function getProgressBarColor() {
     const usage = getBudgetUsagePercentage();
-    if (budget?.amount === 0 && totalSpent > 0) return "red"; // ✅ Force red if over budget with no budget
+    if (budget?.amount === 0 && totalSpent > 0) return "red"; 
     if (usage < 75) return "green";
     if (usage < 90) return "orange";
     return "red";
@@ -101,7 +101,7 @@ function Dashboard() {
       await API.post("/expenses/add", expenseData);
       setShowExpenseModal(false);
       setNewExpense({ category: "", amount: "", date: getCurrentDate(), description: "" });
-      fetchDashboardData(); // ✅ Refresh budget & expenses
+      fetchDashboardData(); 
     } catch (error) {
       console.error("Error adding expense:", error.response?.data || error.message);
     }
@@ -122,25 +122,23 @@ function Dashboard() {
         try {
           budgetCheck = await API.get(`/budget/${selectedMonth}`);
           
-          // ✅ If the budget exists but is `0`, we still need to check if it's actually stored in Firestore
           if (budgetCheck.data?.amount === 0) {
             console.warn("⚠ Budget returned 0, checking if it actually exists...");
             
-            // Try updating it and see if it fails
             const testUpdate = await API.put(`/budget/update/${selectedMonth}`, { amount: 0 }).catch(() => null);
             
             if (!testUpdate) {
-              console.warn("❌ No actual budget entry found, treating as new.");
+              console.warn("No actual budget entry found, treating as new.");
               budgetCheck = null;
             }
           }
           
-          console.log("✅ Budget found:", budgetCheck?.data);
+          console.log("Budget found:", budgetCheck?.data);
         } catch (error) {
           if (error.response?.status === 404) {
             console.warn("⚠ No budget found for this month.");
           } else {
-            console.error("❌ Error fetching budget:", error);
+            console.error("Error fetching budget:", error);
           }
           budgetCheck = null;
         }
@@ -149,19 +147,19 @@ function Dashboard() {
         if (error.response?.status === 404) {
           console.warn("⚠ No budget found for this month.");
         } else {
-          console.error("❌ Error fetching budget:", error);
+          console.error("Error fetching budget:", error);
         }
         budgetCheck = null;
       }
   
       let response;
       if (budgetCheck?.data) {
-        console.log(`🔄 Updating existing budget for ${selectedMonth} to $${updatedBudget}`);
+        console.log(`Updating existing budget for ${selectedMonth} to $${updatedBudget}`);
         response = await API.put(`/budget/update/${selectedMonth}`, { amount: parseFloat(updatedBudget) });
       } else {
-        console.log(`🆕 Creating new budget for ${selectedMonth} with amount: $${updatedBudget}`);
+        console.log(`Creating new budget for ${selectedMonth} with amount: $${updatedBudget}`);
         const requestData = { monthYear: selectedMonth, amount: parseFloat(updatedBudget) };
-        console.log("📤 Sending data to backend:", requestData);
+        console.log("Sending data to backend:", requestData);
 
         response = await API.post(`/budget/set`, requestData, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -171,16 +169,16 @@ function Dashboard() {
       }
   
       if (response.status === 200 || response.status === 201) {
-        console.log("✅ Budget updated successfully:", response.data);
+        console.log("Budget updated successfully:", response.data);
         setBudget({ amount: parseFloat(updatedBudget) });
         setShowBudgetModal(false);
         fetchDashboardData();
       } else {
-        console.error("❌ Unexpected response status:", response.status);
+        console.error("Unexpected response status:", response.status);
         alert("Error updating budget. Please try again.");
       }
     } catch (error) {
-      console.error("❌ Error updating budget:", error);
+      console.error("Error updating budget:", error);
       alert("Failed to update budget. Please try again.");
     }
   };  
@@ -188,8 +186,8 @@ function Dashboard() {
   const handleSaveExpense = async () => {
     try {
       await API.put(`/expenses/update/${editingExpense.id}`, editingExpense);
-      setEditingExpense(null); // Close modal
-      fetchDashboardData(); // Refresh the expense list
+      setEditingExpense(null); 
+      fetchDashboardData(); 
     } catch (error) {
       console.error("Error updating expense:", error);
     }

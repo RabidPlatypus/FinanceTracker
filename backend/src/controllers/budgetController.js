@@ -1,6 +1,6 @@
 const { db } = require("../config/firebase");
 
-// 📌 Set Budget
+// Set budget for a specific month/year
 const setBudget = async (req, res) => {
   try {
     const { monthYear, amount } = req.body;
@@ -20,7 +20,7 @@ const setBudget = async (req, res) => {
   }
 };
 
-// 📌 Get Budget
+// Get budget for a specific month/year
 const getBudget = async (req, res) => {
   try {
     const { monthYear } = req.params;
@@ -30,7 +30,7 @@ const getBudget = async (req, res) => {
     const doc = await budgetRef.get();
 
     if (!doc.exists) {
-      return res.json({ amount: 0 }); // ✅ Return a default budget amount instead of 404
+      return res.json({ amount: 0 }); 
     }
 
     res.json(doc.data());
@@ -40,7 +40,7 @@ const getBudget = async (req, res) => {
   }
 };
 
-
+// Update an existing budget
 const updateBudget = async (req, res) => {
     try {
       const { monthYear } = req.params;
@@ -67,6 +67,7 @@ const updateBudget = async (req, res) => {
     }
   };
   
+  // Get a list of all budgets for the current user
   const listBudgets = async (req, res) => {
     try {
       const userEmail = req.user.email;
@@ -85,6 +86,7 @@ const updateBudget = async (req, res) => {
     }
   };  
   
+  // Delete budget for a specific month/year
   const deleteBudget = async (req, res) => {
     try {
       const { monthYear } = req.params;
@@ -105,6 +107,7 @@ const updateBudget = async (req, res) => {
     }
   };
 
+  // Calculate budget usage for a specific month/year
   const budgetUsage = async (req, res) => {
     try {
       const { monthYear } = req.params;
@@ -135,6 +138,7 @@ const updateBudget = async (req, res) => {
     }
   };
 
+  // Get budget usage history for the current user
   const getBudgetUsageHistory = async (req, res) => {
     try {
       const userEmail = req.user.email;
@@ -174,6 +178,6 @@ const updateBudget = async (req, res) => {
   };
   
   
-  module.exports = { setBudget, getBudget, updateBudget, listBudgets, deleteBudget, budgetUsage, getBudgetUsageHistory };  // ✅ Ensure all functions are exported
+  module.exports = { setBudget, getBudget, updateBudget, listBudgets, deleteBudget, budgetUsage, getBudgetUsageHistory };  
   
   

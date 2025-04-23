@@ -27,7 +27,7 @@ function Profile() {
     try {
       await API.put("/user/update", user);
       setMessage("Profile updated successfully!");
-      localStorage.setItem("user", JSON.stringify(user)); // ✅ Update localStorage
+      localStorage.setItem("user", JSON.stringify(user)); 
     } catch (error) {
       setMessage("Error updating profile.");
     }

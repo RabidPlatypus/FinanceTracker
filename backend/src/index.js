@@ -12,17 +12,15 @@ const userRoutes = require("./routes/userRoutes");
 const app = express();
 app.use(express.json());
 
-// ✅ Allow requests only from your frontend
 app.use(cors({
-  origin: "https://financetracker-x1143-a5d8e.web.app", // Your Firebase frontend URL
+  origin: "https://financetracker-x1143-a5d8e.web.app", 
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization"
 }));
 
-// ✅ Handle preflight requests for all routes
 app.options("*", cors());
 
-app.use("/auth", authRoutes);  // ✅ Registers Auth Routes
+app.use("/auth", authRoutes); 
 app.use("/expenses", expenseRoutes);
 app.use("/budget", budgetRoutes);
 app.use("/user", userRoutes);

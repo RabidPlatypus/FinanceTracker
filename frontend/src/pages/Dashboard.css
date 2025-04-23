@@ -66,7 +66,7 @@
 
 .expense-table th {
   color: black;
-  background-color: #E6F4EA; /* soft green */
+  background-color: #E6F4EA; 
 }
 
 
@@ -127,21 +127,19 @@
 }
 
 .dark-mode .right-panel {
-  background-color: #1E1E1E; /* Darker right panel */
+  background-color: #1E1E1E; 
 }
 
-/* Make sure Dashboard h1, h2, h3 headers in dark mode are lime green */
 .dashboard-container h1,
 .dashboard-container h2,
 .dashboard-container h3 {
-   color: #14532D; /* Lime green */
+   color: #14532D; 
 }
 
-/* Only change header colors for Dashboard in dark mode */
 body.dark-mode .dashboard-container h1,
 body.dark-mode .dashboard-container h2,
 body.dark-mode .dashboard-container h3 {
-  color: #A8FF60 !important; /* Lime green for Dashboard headers */
+  color: #A8FF60 !important; 
 }
 
 
@@ -171,7 +169,7 @@ body.dark-mode .dashboard-container h3 {
 }
 
 .export-button svg {
-  margin-right: 8px; /* space between icon and text */
+  margin-right: 8px; 
   width: 20px;
   height: 20px;
 }

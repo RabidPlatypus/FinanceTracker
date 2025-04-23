@@ -1,12 +1,9 @@
-/* === ANALYTICS PAGE BASE === */
+
 .analytics-container {
     width: 100%;
     padding: 2rem;
   }
   
-  /* === MUI Components Dark Mode Fix === */
-  
-  /* Filters (Selects and Inputs) */
   .dark-mode .MuiInputBase-input,
   .dark-mode .MuiSelect-select {
     color: white !important;
@@ -17,32 +14,26 @@
     border-color: #555 !important;
   }
   
-  /* Tabs titles */
   .dark-mode .MuiTab-root {
     color: white !important;
   }
   
-  /* Active selected Tab (lime green glow) */
   .dark-mode .Mui-selected {
     color: #A8FF60 !important;
   }
   
-  /* Tabs background (optional for deeper dark mode look) */
   .dark-mode .MuiTabs-root {
     background-color: #1E1E1E;
   }
   
-  /* Highest/Lowest Month Labels */
   .dark-mode .MuiTypography-h6 {
     color: #E0FFE0;
   }
   
-  /* === CATEGORY CHARTS === */
   .analytics-chart-container {
     margin-top: 3rem;
   }
   
-  /* Responsive Pie + Line Charts */
   .analytics-chart {
     width: 100%;
     height: 300px;

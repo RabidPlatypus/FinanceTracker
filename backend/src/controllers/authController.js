@@ -4,11 +4,12 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// 📌 Signup
+// Signup - Create a new user
 const signup = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
+    // Make sure all fields are provided
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -16,7 +17,7 @@ const signup = async (req, res) => {
     // Check if user already exists
     const userRef = db.collection("users").doc(email);
     const doc = await userRef.get();
-
+  
     if (doc.exists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -39,67 +40,45 @@ const signup = async (req, res) => {
   }
 };
 
+// Login
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    console.log("Login request received for:", email); // ✅ Debugging log
+    console.log("Login request received for:", email); // Debugging
     
+    // Look for user in Firestore based on provided email
     const userRef = db.collection("users").doc(email);
     const doc = await userRef.get();
 
     if (!doc.exists) {
-      console.log("User not found in database"); // ✅ Debugging log
+      console.log("User not found in database"); // Debugging
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const user = doc.data();
-    console.log("User found:", user); // ✅ Debugging log
+    console.log("User found:", user); // Debugging
 
+    // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      console.log("Invalid password"); // ✅ Debugging log
+      console.log("Invalid password"); // Debugging
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // Generate JWT token
     const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "7d" });
 
-    console.log("Login successful!"); // ✅ Debugging log
+    console.log("Login successful!"); // Debugging
     res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email } });
   } catch (error) {
-    console.error("Login Error:", error); // ✅ More detailed error
+    console.error("Login Error:", error);
     res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
 
-// 📌 Google Login
-const googleLogin = async (req, res) => {
-  try {
-    const { idToken } = req.body;
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-
-    const email = decodedToken.email;
-    const userRef = db.collection("users").doc(email);
-    const doc = await userRef.get();
-
-    if (!doc.exists) {
-      await userRef.set({
-        email,
-        firstName: decodedToken.name.split(" ")[0],
-        lastName: decodedToken.name.split(" ")[1] || "",
-      });
-    }
-
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "7d" });
-
-    res.json({ token, user: { firstName: decodedToken.name.split(" ")[0], lastName: decodedToken.name.split(" ")[1] || "", email } });
-  } catch (error) {
-    res.status(500).json({ message: "Error with Google login", error });
-  }
-};
-
-// 📌 Get User Profile
+// Get User Profile
 const getUserProfile = async (req, res) => {
   try {
     const email = req.user.email;
@@ -117,5 +96,4 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// 📌 Export functions correctly
 module.exports = { signup, login, googleLogin, getUserProfile };

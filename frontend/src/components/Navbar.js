@@ -40,8 +40,6 @@ function Navbar({ setAuth }) {
       <div className="nav-right">
         <Link to="/dashboard" className="nav-button">Dashboard</Link>
         <Link to="/analytics" className="nav-button">Analytics</Link>
-        
-        {/* Add tooltips using `title` attribute */}
         <Link to="/profile" className="icon-button" title="Profile">
           <FiUser size={20} />
         </Link>

@@ -1,5 +1,3 @@
-// frontend/src/pages/Analytics.js
-
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Box, Typography, Select, MenuItem, TextField } from "@mui/material";
 import { PieChart, Pie, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line } from "recharts";
@@ -71,7 +69,6 @@ function Analytics() {
     setTrendData(trendArray);
   };
 
-  // Aggregating for spending overview
   const categoryData = expenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
