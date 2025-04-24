@@ -5,6 +5,7 @@ import API from "../api";
 import './Analytics.css';
 
 function Analytics() {
+  // State variables
   const [activeTab, setActiveTab] = useState(0);
 
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -18,10 +19,12 @@ function Analytics() {
 
   const COLORS = ["#2ECC71", "#27AE60", "#1ABC9C", "#16A085", "#3498DB", "#1F618D"];
 
+  // Fetch expenses when the component mounts or when filters change
   useEffect(() => {
     fetchExpenses();
   }, [activeTab, categoryFilter, startDate, endDate]);
 
+  // Fetch expenses from the API
   const fetchExpenses = async () => {
     try {
       const params = {};
@@ -41,6 +44,7 @@ function Analytics() {
     }
   };
 
+  // Process trend data to calculate monthly spending
   const processTrendData = (expensesData) => {
     const monthlyData = {};
 
@@ -69,11 +73,13 @@ function Analytics() {
     setTrendData(trendArray);
   };
 
+  // Calculate category data
   const categoryData = expenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
   }, {});
 
+  // Generate pie chart data
   const pieData = Object.keys(categoryData).map((key, index) => ({
     name: key,
     value: categoryData[key],
@@ -85,6 +91,7 @@ function Analytics() {
     return acc;
   }, {});
 
+  // Generate bar chart data
   const barData = Object.keys(dailyData)
     .sort((a, b) => new Date(a) - new Date(b))
     .map((date) => ({

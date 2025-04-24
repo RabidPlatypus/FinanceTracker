@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 
 function Profile() {
+  // State variables for user profile, password, and messages
   const navigate = useNavigate();
   const [user, setUser] = useState({ firstName: "", lastName: "", email: "" });
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  // Fetch user profile when the component mounts
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -33,6 +35,7 @@ function Profile() {
     }
   };
 
+  // Handle password change
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
@@ -45,6 +48,7 @@ function Profile() {
     }
   };
 
+  // Handle account deletion
   const handleDeleteAccount = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
     if (confirmDelete) {

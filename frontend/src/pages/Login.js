@@ -4,11 +4,13 @@ import API from "../api";
 import "./Login.css";
 
 function Login({ setAuth }) {
+  // State variables for email, password, error message, and navigation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");

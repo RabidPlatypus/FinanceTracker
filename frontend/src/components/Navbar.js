@@ -8,6 +8,7 @@ function Navbar({ setAuth }) {
   const [user, setUser] = useState({});
   const [darkMode, setDarkMode] = useState(false);
 
+  // Check if user is logged in and set user data from local storage
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) setUser(storedUser);
@@ -17,6 +18,7 @@ function Navbar({ setAuth }) {
     document.body.classList.toggle("dark-mode", storedTheme);
   }, []);
 
+  // Toggle dark mode based on user preference
   const toggleDarkMode = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
@@ -24,6 +26,7 @@ function Navbar({ setAuth }) {
     document.body.classList.toggle("dark-mode", newMode);
   };
 
+  // Handle logout and redirect to login page
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");

@@ -4,6 +4,7 @@ import "./Dashboard.css";
 import { CSVLink } from "react-csv";
 
 function Dashboard() {
+  // State variables
   const [expenses, setExpenses] = useState([]);
   const [budget, setBudget] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthYear());
@@ -23,7 +24,7 @@ function Dashboard() {
   }, [selectedMonth, fetchDashboardData]); 
   
   
-
+  // Fetch expenses and budget data when the component mounts or when selectedMonth changes
   async function fetchDashboardData() {
     try {
       const expenseRes = await API.get(`/expenses/list`);
@@ -43,6 +44,7 @@ function Dashboard() {
     }
   }
 
+  // Helper functions
   function getCurrentMonthYear() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;

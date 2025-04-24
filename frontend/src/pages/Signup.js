@@ -4,6 +4,7 @@ import API from "../api";
 import "./Signup.css"; 
 
 function Signup() {
+  // State variables for form data, error message, and navigation
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
